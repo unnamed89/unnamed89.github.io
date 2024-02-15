@@ -1,0 +1,98 @@
+<html>
+<head>
+<title>N-400 Test Study</title>
+<style>
+    .question {
+        border: 1px solid gray;
+        width: 2em;
+        min-height: 2em;
+        display: inline-block;
+        align-items: center;
+        text-align: center;
+    }
+    .question-done {
+        background: green;
+    }
+    button {
+        min-width: 10em;
+        height: 5em;
+        font-size: 2em;
+        margin-right: 1em;
+    }
+    #question {
+        display: none;
+    }
+</style>
+
+<div>
+<button onclick="nextQuestion()">Next Question</button>
+<button onclick="play()">Play Again</button>
+</div>
+
+<br>
+
+<div id="remaining"></div>
+<div id="q" style="width: 80%; margin: 1em;"></div>
+
+<audio src="" id="question" controls></audio>
+
+<script>
+var currentQuestion = 0;
+var questions = null;
+var numQuestions = 100;
+
+function shuffle(arr) {
+  var i = arr.length, j, temp;
+  while(--i > 0){
+    j = Math.floor(Math.random()*(i+1));
+    temp = arr[j];
+    arr[j] = arr[i];
+    arr[i] = temp;
+  }
+}
+
+
+function initialize() {
+    questions = []
+    for (var i = 0; i < numQuestions; i++) {
+        questions.push(i);
+    }
+    shuffle(questions);
+    console.log(questions);
+
+    currentQuestion = questions.length;
+    document.getElementById("q").innerHTML = "";
+    for (var i = 0; i < questions.length; i++) {
+        var e = document.createElement("span");
+        e.className = "question";
+        e.id = "q-" + (i + 1);
+        e.textContent = i + 1;
+        document.getElementById("q").appendChild(e);
+    }
+    document.getElementById("question").style.display = "block";
+}
+
+function play() {
+    try {
+        document.getElementById("question").play();
+    } catch {
+        // Ignore any interruption to play.
+    }
+}
+
+function nextQuestion() {
+    if (currentQuestion == 0) {
+        initialize();
+    }
+    document.getElementById("remaining").textContent = "Remaining: " + (currentQuestion - 1);
+
+    var r = questions[currentQuestion - 1] + 1;
+    document.getElementById("q-" + r).className = document.getElementById("q-" + r).className + " question-done";
+
+    currentQuestion--;
+    var url = "https://www.uscis.gov/sites/default/files/document/audio/Practice_Quiz_Question_" + r + ".mp3"
+    document.getElementById("question").src = url;
+    play();
+}
+</script>
+</html>
